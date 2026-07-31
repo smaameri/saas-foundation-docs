@@ -17,6 +17,13 @@
           "quickstart",
           "demo"
         ]
+      },
+      {
+        "group": "Core concepts",
+        "pages": [
+          "portals",
+          "schema"
+        ]
       }
     ]
   },

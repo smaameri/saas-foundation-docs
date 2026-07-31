@@ -1,0 +1,155 @@
+---
+title: "Schema"
+description: "Explore the database models included with SaaS Foundation."
+---
+
+SaaS Foundation uses Prisma with PostgreSQL. The schema combines Better Auth
+models with the organization, invitation, and API key models used by the admin
+and customer portals.
+
+The tables below describe persisted database fields. Prisma relation fields,
+such as `sessions` on `User`, are omitted because they do not create additional
+columns.
+
+## User
+
+Stores a person's identity, profile, platform access, and moderation state.
+
+| Field | Type | Key | Description |
+| --- | --- | --- | --- |
+| `id` | string | Primary | The unique user identifier. |
+| `name` | string | - | The user's display name. |
+| `firstName` | string | - | The user's first name. Stored as `first_name`. |
+| `lastName` | string | - | The user's last name. Stored as `last_name`. |
+| `email` | string | Unique | The user's unique email address. |
+| `emailVerified` | boolean | - | Indicates whether the email address is verified. Defaults to `false`. |
+| `image` | string or null | - | The URL of the user's profile image. |
+| `role` | string or null | - | The user's platform role. Regular users have the `user` role and platform administrators have the `admin` role. |
+| `banned` | boolean or null | - | Indicates whether the user is banned. |
+| `banReason` | string or null | - | The reason the user was banned. |
+| `banExpires` | date or null | - | The date and time when the ban expires. |
+| `createdAt` | date | - | The date and time when the user was created. |
+| `updatedAt` | date | - | The date and time when the user was last updated. |
+
+## Session
+
+Stores authenticated sessions and their active organization context.
+
+| Field | Type | Key | Description |
+| --- | --- | --- | --- |
+| `id` | string | Primary | The unique session identifier. |
+| `userId` | string | Foreign, index | The user that owns the session. Deleting the user deletes the session. |
+| `expiresAt` | date | - | The date and time when the session expires. |
+| `token` | string | Unique | The unique token used to identify the session. |
+| `ipAddress` | string or null | - | The IP address associated with the session. |
+| `userAgent` | string or null | - | The browser or client user agent associated with the session. |
+| `impersonatedBy` | string or null | - | The identifier of the administrator impersonating the user. |
+| `activeOrganizationId` | string or null | - | The organization currently selected in the customer portal. |
+| `createdAt` | date | - | The date and time when the session was created. |
+| `updatedAt` | date | - | The date and time when the session was last updated. |
+
+## Account
+
+Stores password credentials and external identity-provider accounts connected
+to a user.
+
+| Field | Type | Key | Description |
+| --- | --- | --- | --- |
+| `id` | string | Primary | The unique account identifier. |
+| `accountId` | string | - | The account identifier supplied by the authentication provider. |
+| `providerId` | string | - | The identifier of the authentication provider. |
+| `userId` | string | Foreign, index | The user that owns the account. Deleting the user deletes the account. |
+| `accessToken` | string or null | - | The access token issued by the provider. |
+| `refreshToken` | string or null | - | The refresh token issued by the provider. |
+| `idToken` | string or null | - | The identity token issued by the provider. |
+| `accessTokenExpiresAt` | date or null | - | The date and time when the access token expires. |
+| `refreshTokenExpiresAt` | date or null | - | The date and time when the refresh token expires. |
+| `scope` | string or null | - | The permissions granted to the provider account. |
+| `password` | string or null | - | The hashed password for an email-and-password account. |
+| `createdAt` | date | - | The date and time when the account was created. |
+| `updatedAt` | date | - | The date and time when the account was last updated. |
+
+## Verification
+
+Stores short-lived verification values used by authentication flows.
+
+| Field | Type | Key | Description |
+| --- | --- | --- | --- |
+| `id` | string | Primary | The unique verification identifier. |
+| `identifier` | string | Index | The value used to look up the verification record, such as an email address. |
+| `value` | string | - | The verification token or code. |
+| `expiresAt` | date | - | The date and time when the verification expires. |
+| `createdAt` | date | - | The date and time when the verification was created. |
+| `updatedAt` | date | - | The date and time when the verification was last updated. |
+
+## Apikey
+
+Stores user-owned API keys and their rate-limit state. The Prisma model is named
+`Apikey` and maps to the `apikey` database table.
+
+| Field | Type | Key | Description |
+| --- | --- | --- | --- |
+| `id` | string | Primary | The unique API key record identifier. |
+| `configId` | string | Index | The API key configuration identifier. Defaults to `default`. |
+| `name` | string or null | - | A user-friendly name for the key. |
+| `start` | string or null | - | The visible starting characters used to identify the key. |
+| `prefix` | string or null | - | The prefix added to generated API keys. |
+| `key` | string | Unique | The unique stored API key value. |
+| `referenceId` | string | Foreign, index | The user that owns the API key. |
+| `refillInterval` | integer or null | - | The interval used to replenish the key's request allowance. |
+| `refillAmount` | integer or null | - | The number of requests restored during each refill. |
+| `lastRefillAt` | date or null | - | The date and time when the allowance was last refilled. |
+| `enabled` | boolean or null | - | Indicates whether the API key is enabled. |
+| `rateLimitEnabled` | boolean or null | - | Indicates whether rate limiting is enabled for the key. |
+| `rateLimitTimeWindow` | integer or null | - | The rate-limit time window. |
+| `rateLimitMax` | integer or null | - | The maximum number of requests allowed in the time window. |
+| `requestCount` | integer or null | - | The number of requests made in the current time window. |
+| `remaining` | integer or null | - | The number of requests remaining in the current time window. |
+| `lastRequest` | date or null | - | The date and time when the key was last used. |
+| `expiresAt` | date or null | - | The date and time when the key expires. |
+| `createdAt` | date | - | The date and time when the key was created. |
+| `updatedAt` | date | - | The date and time when the key was last updated. |
+| `permissions` | string or null | - | The key permissions serialized as a string. |
+| `metadata` | string or null | - | Additional API key metadata serialized as a string. |
+
+## Organization
+
+Stores each customer organization in the multi-tenant application.
+
+| Field | Type | Key | Description |
+| --- | --- | --- | --- |
+| `id` | string | Primary | The unique organization identifier. |
+| `name` | string | - | The organization's display name. |
+| `slug` | string or null | Unique | The unique, URL-friendly organization name. |
+| `logo` | string or null | - | The URL of the organization's logo. |
+| `metadata` | string or null | - | Additional organization metadata serialized as a string. |
+| `createdAt` | date | - | The date and time when the organization was created. |
+| `updatedAt` | date | - | The date and time when the organization was last updated. |
+
+## Member
+
+Connects a user to an organization and assigns their organization-level role.
+
+| Field | Type | Key | Description |
+| --- | --- | --- | --- |
+| `id` | string | Primary | The unique membership identifier. |
+| `userId` | string | Foreign, index | The user that belongs to the organization. Deleting the user deletes the membership. |
+| `organizationId` | string | Foreign, index | The organization the user belongs to. Deleting the organization deletes the membership. |
+| `role` | string | - | The user's role within the organization. |
+| `createdAt` | date | - | The date and time when the membership was created. |
+
+## Invitation
+
+Stores pending and completed invitations for both portals.
+
+| Field | Type | Key | Description |
+| --- | --- | --- | --- |
+| `id` | string | Primary | The unique invitation identifier. |
+| `email` | string | - | The email address of the person being invited. |
+| `inviterId` | string | Foreign | The user that created the invitation. Deleting the inviter deletes the invitation. |
+| `organizationId` | string or null | Foreign, index | The organization the recipient is invited to join. Admin portal invitations do not require an organization. |
+| `role` | string | - | The role assigned to the recipient when the invitation is accepted. |
+| `portal` | string | - | The portal the recipient is invited to access. |
+| `status` | string | - | The current state of the invitation. |
+| `expiresAt` | date | - | The date and time when the invitation expires. |
+| `createdAt` | date | - | The date and time when the invitation was created. |

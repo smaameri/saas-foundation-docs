@@ -1,0 +1,41 @@
+---
+title: "Portals"
+description: "The Admin and Customer portals"
+---
+
+A typical multi-tenant B2B SaaS application has two main types of users or access. The Admin users are the owners of the platform
+and have cross-organization access. A customer user is a member of an organization and has access to the resources of
+that organization only.
+
+As such, each of these user types has their own portals, since their needs and requirements will be different.
+
+These are provided for in the SaaS Foundation template as the Admin and Customer portals.
+
+The application is setup in such a way that an Admin Portal user can also be a member of one or many organizations. As
+such they are also able to access the Customer Portals as part of their organization.
+
+Each of these portals have their own roles and permissions scopes.
+
+<CardGroup cols={2}>
+  <Card title="Admin portal" icon="shield-halved">
+    The admin portal is for your platform administrators. It provides
+    cross-organization access for operating the SaaS application as a whole.
+
+    Use it to manage platform users, organizations, team members, and other
+    system-wide resources.
+  </Card>
+
+  <Card title="Customer portal" icon="building-user">
+    The customer portal is for the people inside an organization, including its
+    owners, administrators, and members.
+
+    Access is scoped to the active organization. Customers use this portal to
+    manage their workspace, members, invitations, and organization-owned data.
+  </Card>
+</CardGroup>
+
+## Why the portals are separate
+
+The portals represent different trust boundaries and access levels. Admin operations may work
+across the entire platform, while customer operations must remain scoped to the
+current organization.
