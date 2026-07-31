@@ -1,0 +1,75 @@
+---
+title: "Repositories and tenancy"
+description: "Learn how repositories isolate Prisma access and tenant boundaries."
+---
+
+SaaS Foundation uses the repository pattern for database access. Route handlers
+and services call repository functions instead of writing Prisma queries
+directly.
+
+## Repository per entity
+
+A repository usually represents one entity or closely related set of queries.
+Examples include user, organization, member, invitation, and API key
+repositories.
+
+```text
+src/repositories/
+├── admin/
+│   ├── organizationRepository.ts
+│   ├── memberRepository.ts
+│   └── userRepository.ts
+├── customers/
+│   ├── organizationRepository.ts
+│   ├── memberRepository.ts
+│   └── userRepository.ts
+└── auth/
+    ├── invitationRepository.ts
+    └── userRepository.ts
+```
+
+Repositories keep Prisma details in one layer. A route can focus on the request
+and business rules without also owning filtering, sorting, pagination, or
+database query construction.
+
+## Preserve portal boundaries
+
+Admin and customer repositories remain separate even when two functions happen
+to look similar.
+
+- **Admin repositories** may perform platform-wide queries without implicit
+  organization scoping.
+- **Customer repositories** query data within the authenticated organization.
+- **Auth repositories** support authentication and invitation flows outside a
+  portal request.
+
+This duplication is intentional. Combining an admin query and customer query
+because they currently use similar Prisma code creates an easy path for
+platform-wide access to leak into customer code later.
+
+## Scope customer queries
+
+Customer repository functions that access organization-owned data receive the
+authenticated organization ID. They include it in the database filter alongside
+the requested record ID or other filters.
+
+```ts
+listOrganizationMembers(organizationId, options)
+findOrganizationMember(organizationId, memberId)
+findOrganizationMemberByEmail(organizationId, email)
+```
+
+The `withCustomer` route wrapper reads the active organization from the session,
+verifies the user's membership, and passes the trusted `organizationId` into the
+handler. The route then passes it to customer repositories.
+
+<Warning>
+  Do not accept the tenant boundary from an untrusted request body. Use the
+  organization ID established by the authenticated customer context.
+</Warning>
+
+## Keep responsibilities clear
+
+Repositories perform data access. Route handlers remain responsible for request
+validation, authorization, existence checks, and business rules unless a more
+complex rule is deliberately extracted into a service or validator.

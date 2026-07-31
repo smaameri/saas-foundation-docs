@@ -1,0 +1,73 @@
+---
+title: "API architecture"
+description: "Learn why application reads and mutations use a consistent API boundary."
+---
+
+SaaS Foundation uses APIs as the standard way for interactive frontend code to
+communicate with the backend. Table views load their lists through API requests.
+Form submissions, updates, and deletions also go through API requests.
+
+## One way to communicate
+
+Using one approach removes a recurring decision from feature work. You do not
+need to decide whether a list should use an API while its form uses a Server
+Action, or explain why two similar operations cross the backend boundary in
+different ways.
+
+The convention is straightforward:
+
+- Client components call a typed service from `src/services/api/`.
+- The service calls a route under `src/app/api/`.
+- The route authenticates, authorizes, validates, and handles the operation.
+- The route returns a standard success, error, or paginated response.
+
+API services and routes are scoped by context. Admin features use the admin API
+client and admin routes. Customer features use customer-scoped services and
+routes.
+
+## Why APIs
+
+APIs create a clear separation between the frontend and backend. They are also
+a generally understood boundary, regardless of whether someone comes from a
+React, mobile, backend, or another application-development background.
+
+That boundary keeps future options open. A mobile application, another product,
+an integration, or an agent can consume the same backend entry points without
+requiring the original React component tree.
+
+<Info>
+  The API-first convention does not prevent you from using Server Components.
+  When a Server Component passes data to a Client Component, it uses the same
+  serializers and public types as an API response.
+</Info>
+
+## Frontend API services
+
+Components do not call `fetch` directly. API calls live in typed service objects
+such as:
+
+```text
+src/services/api/admin/organizationsApi.ts
+src/services/api/admin/usersApi.ts
+src/services/api/customer/membersApi.ts
+src/services/api/customer/invitationsApi.ts
+```
+
+This gives each frontend feature one predictable place to find its backend
+operations and response types.
+
+## Standard responses
+
+Route handlers use the helpers in `src/app/api/response.ts`. Successful
+responses expose data consistently, paginated responses add pagination
+metadata, and errors use a shared error shape.
+
+```json
+{
+  "success": true,
+  "data": []
+}
+```
+
+Consistency here keeps loading, error, table, and form behavior easier to reuse
+throughout both portals.

@@ -1,0 +1,81 @@
+---
+title: "Roles and permissions"
+description: "Understand access control in the admin and customer portals."
+---
+
+SaaS Foundation has separate role and permission systems for the admin and
+customer portals. A platform role controls access across the application. An
+organization role controls access within one organization.
+
+The two systems intentionally remain separate. An organization administrator
+does not automatically receive access to the admin portal.
+
+## Admin portal
+
+The admin portal uses the role stored on the `User` model.
+
+### Roles
+
+#### Admin
+
+Platform administrators manage users and sessions across the platform. They can
+also manage API keys, organizations, members, and invitations.
+
+#### User
+
+Regular users have none of the admin permissions listed below. They access and
+read organization data through their memberships in the customer portal.
+
+### Permissions
+
+Users with the `admin` role have the following permissions:
+
+- **User:** `create`, `list`, `set-role`, `ban`, `impersonate`, `delete`, `set-password`, `set-email`, `get`, `update`
+- **Session:** `list`, `revoke`, `delete`
+- **API key:** `read:any`, `delete:any`
+- **Organization:** `create`, `update`, `delete`
+- **Member:** `create`, `update`, `delete`
+- **Invitation:** `create`, `cancel`
+
+The user and session permissions come from Better Auth's admin plugin. SaaS
+Foundation adds permissions for the other resources used by the admin portal.
+
+## Customer portal
+
+The customer portal uses the role stored on each `Member` record. The same user
+can have a different role in each organization.
+
+### Roles
+
+#### Owner
+
+Organization owners have full control over the organization, its members,
+invitations, teams, and access control.
+
+#### Admin
+
+Organization administrators manage the organization and its people, but cannot
+delete the organization.
+
+#### Member
+
+Organization members have read access to all items in their organization.
+
+### Permissions
+
+#### Owner
+
+- **Organization:** `update`, `delete`
+- **Member:** `create`, `update`, `delete`
+- **Invitation:** `create`, `cancel`
+- **Team:** `create`, `update`, `delete`
+- **Access control:** `create`, `read`, `update`, `delete`
+
+#### Admin
+
+An Admin has the same permissions as an Owner, except they cannot delete an
+organization.
+
+#### Member
+
+Members have read access to all items.

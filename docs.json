@@ -22,7 +22,18 @@
         "group": "Core concepts",
         "pages": [
           "portals",
-          "schema"
+          "roles-and-permissions",
+          "schema",
+          "api-format"
+        ]
+      },
+      {
+        "group": "Architecture",
+        "pages": [
+          "architecture",
+          "architecture-api",
+          "architecture-repositories",
+          "architecture-contracts"
         ]
       }
     ]

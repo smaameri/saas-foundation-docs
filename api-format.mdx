@@ -1,0 +1,139 @@
+---
+title: "API format"
+description: "Understand the standard success, error, and pagination formats returned by the SaaS Foundation API."
+---
+
+SaaS Foundation API routes use a consistent response envelope. Check the
+`success` field to distinguish a successful response from an error response.
+
+## Success responses
+
+A successful response includes `success: true` and a `data` field. The shape of
+`data` depends on the endpoint.
+
+### Detail response
+
+Endpoints that return one resource respond with `200 OK`.
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user_123",
+    "name": "Ada Lovelace"
+  }
+}
+```
+
+### List response
+
+Endpoints that return an unpaginated collection respond with `200 OK`. The
+`data` field is always an array, including when there are no results.
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "user_123",
+      "name": "Ada Lovelace"
+    }
+  ]
+}
+```
+
+### Paginated response
+
+Paginated endpoints respond with `200 OK` and include a top-level `pagination`
+object alongside the data array.
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "user_123",
+      "name": "Ada Lovelace"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "per_page": 20,
+    "total_pages": 3,
+    "total_results": 42
+  }
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `page` | number | The current page number. |
+| `per_page` | number | The requested number of results per page. |
+| `total_pages` | number | The total number of pages, rounded up from the result count. |
+| `total_results` | number | The total number of matching results across all pages. |
+
+### No-content response
+
+Endpoints that complete successfully without returning data respond with
+`204 No Content`. These responses have no JSON body.
+
+## Error responses
+
+An error response includes `success: false` and an `error` object.
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "not_found",
+    "message": "User not found."
+  }
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `code` | string | A machine-readable error code. |
+| `message` | string, optional | A human-readable explanation of the error. |
+| `details` | array or null, optional | Field-level validation errors, when available. |
+
+The API defines these standard error responses:
+
+| HTTP status | Error code | Default message |
+| --- | --- | --- |
+| `400 Bad Request` | `validation_failed` | One or more fields are invalid. |
+| `401 Unauthorized` | `unauthorized` | Unauthorized. |
+| `403 Forbidden` | `forbidden` | Forbidden. |
+| `404 Not Found` | `not_found` | Not found. |
+| `409 Conflict` | `conflict` | Supplied by the endpoint. |
+
+Endpoints can provide a more specific message for authorization, permission,
+missing-resource, and conflict errors while retaining the standard error code.
+
+### Validation errors
+
+Validation failures include a `details` array. Each item can identify a field
+with a dot-separated `path` and explain the problem with a `message`.
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "validation_failed",
+    "message": "One or more fields are invalid.",
+    "details": [
+      {
+        "path": "profile.email",
+        "message": "Enter a valid email address."
+      }
+    ]
+  }
+}
+```
+
+## Handling responses
+
+Use both the HTTP status and the `success` field when handling a response. A
+successful JSON response has `success: true`. An error has `success: false` and
+a stable error `code` that you can use for application logic. Display `message`
+or validation `details` when you need to give feedback to a person.
