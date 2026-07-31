@@ -35,6 +35,12 @@
           "architecture-repositories",
           "architecture-contracts"
         ]
+      },
+      {
+        "group": "Authentication",
+        "pages": [
+          "authentication"
+        ]
       }
     ]
   },

@@ -1,0 +1,106 @@
+---
+title: "Authentication"
+description: "Learn how SaaS Foundation uses Better Auth for authentication and authorization."
+---
+
+Better Auth provides a strong set of authentication features, well-designed tables, and an extensible plugin system. Our
+goal here is to leverage this powerful system. And allow you to build on top it and use its large system of plugins as
+needed for you project.
+
+The application tries to stay out of the library's way while still exposing a
+smaller, deliberate set of authentication actions for a B2B SaaS starter.
+
+## Included plugins
+
+The schema and authentication capabilities come from Better Auth's default
+models and three plugins that give a great foundation for a multi-tenant
+B2B SaaS application.
+
+### Admin
+
+The Admin plugin adds platform roles, user administration, bans, impersonation,
+and session management. SaaS Foundation extends its access control with the
+organization, member, invitation, and API key permissions used by the admin
+portal.
+
+### Organization
+
+The Organization plugin adds organizations, memberships, invitations, active
+organization sessions, and organization-level roles. These models and
+permissions form the foundation of the customer portal.
+
+### API Key
+
+The API Key plugin adds user-owned API keys and the fields needed for expiration,
+permissions, usage, and rate limits. SaaS Foundation allows API keys to create
+sessions and currently leaves their built-in rate limiting disabled.
+
+Together with email and password authentication, these plugins provide the
+baseline features that are useful in almost any multi-tenant B2B SaaS
+application. Better Auth offers many more plugins that you can add when your
+product needs them.
+
+## A deliberate integration boundary
+
+Better Auth includes client libraries and a broad collection of API endpoints.
+SaaS Foundation does not expose that entire surface to the frontend. It does not
+configure a Better Auth client service or mount the library's catch-all API
+handler.
+
+Instead, the application defines its own focused routes under `src/app/api/auth/`.
+The frontend calls those routes through the same typed API service pattern used
+elsewhere in the application.
+
+```text
+src/app/api/auth/
+├── login/
+├── logout/
+├── reset-password/
+├── change-password/
+├── session/
+├── account/
+└── permissions/
+```
+
+This keeps the available operations easy to discover and gives the application
+control over validation, authorization, response formats, and which actions are
+available at all.
+
+## When the application calls Better Auth
+
+Application routes call the Better Auth server API when the operation belongs to
+the authentication system. Examples include:
+
+- Signing in, signing out, and creating an account
+- Reading and verifying sessions
+- Changing and resetting passwords
+- Setting the active organization
+- Checking admin and organization permissions
+- Starting and stopping impersonation
+- Creating API keys
+
+Better Auth also calls the application's email functions for password resets and
+organization invitations. This keeps the authentication workflow in Better Auth
+while allowing SaaS Foundation to own the email content and delivery.
+
+## When the application uses repositories
+
+Not every change to an auth-backed model needs a Better Auth server API. For a
+simple application-owned update, the route can validate the request and use a
+repository to update the database directly.
+
+Updating a user's first and last name is one example. The route still verifies
+the Better Auth session, but the profile update itself goes through the auth user
+repository.
+
+This keeps Better Auth responsible for authentication behavior without forcing
+ordinary application data updates through a much broader API.
+
+## Schema ownership
+
+The database schema comes almost entirely from Better Auth's core models and the
+Admin, Organization, and API Key plugins. SaaS Foundation adds only a small
+number of application-specific fields, including profile names and portal
+context for invitations.
+
+See [Schema](/schema) for the complete model and field reference.

@@ -3,9 +3,12 @@ title: "Schema"
 description: "Explore the database models included with SaaS Foundation."
 ---
 
-SaaS Foundation uses Prisma with PostgreSQL. The schema combines Better Auth
-models with the organization, invitation, and API key models used by the admin
-and customer portals.
+SaaS Foundation uses Prisma with PostgreSQL. The schema comes almost entirely
+from Better Auth's core models and its Admin, Organization, and API Key plugins,
+with a small number of application-specific fields.
+
+Read [Authentication](/authentication) to learn why the application relies on
+Better Auth while exposing a smaller, deliberate set of auth operations.
 
 The tables below describe persisted database fields. Prisma relation fields,
 such as `sessions` on `User`, are omitted because they do not create additional
