@@ -23,17 +23,25 @@
         "pages": [
           "portals",
           "roles-and-permissions",
-          "schema",
-          "api-format"
+          "schema"
         ]
       },
       {
         "group": "Architecture",
         "pages": [
           "architecture",
-          "architecture-api",
           "architecture-repositories",
-          "architecture-contracts"
+          "architecture-validation",
+          "architecture-serialization",
+          "ai-assistance"
+        ]
+      },
+      {
+        "group": "API",
+        "pages": [
+          "architecture-api",
+          "api-request-handling",
+          "api-format"
         ]
       },
       {

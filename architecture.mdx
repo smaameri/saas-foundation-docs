@@ -46,17 +46,26 @@ result, and returns one of the application's standard API response formats.
 
 ## Architectural patterns
 
-<CardGroup cols={3}>
+<CardGroup cols={2}>
   <Card title="API architecture" icon="route" href="/architecture-api">
     Use one consistent interface for reads and mutations while keeping future
     consumers open.
   </Card>
-  <Card title="Repositories and tenancy" icon="database" href="/architecture-repositories">
+  <Card title="Repositories" icon="database" href="/architecture-repositories">
     Keep Prisma access behind entity repositories and preserve portal trust
     boundaries.
   </Card>
-  <Card title="Validation and serialization" icon="code-compare" href="/architecture-contracts">
-    Share validation where useful and make every frontend data shape explicit.
+  <Card title="Validation" icon="circle-check" href="/architecture-validation">
+    Validate every backend input and share Zod schemas where the same rules
+    apply to frontend forms.
+  </Card>
+  <Card title="Serialization" icon="code-compare" href="/architecture-serialization">
+    Make every frontend data shape explicit at API and Server Component
+    boundaries.
+  </Card>
+  <Card title="Coding agents" icon="sparkles" href="/ai-assistance">
+    Use the included agent instructions and authentication skills to build in
+    line with the existing architecture.
   </Card>
 </CardGroup>
 

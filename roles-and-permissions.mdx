@@ -12,7 +12,9 @@ does not automatically receive access to the admin portal.
 
 ## Admin portal
 
-The admin portal uses the role stored on the `User` model.
+The admin portal uses the nullable `role` field stored on the `User` model. A
+user only has access to the admin portal when this field is set. When the field
+is `null`, the admin route wrapper returns `403 Forbidden`.
 
 ### Roles
 
@@ -42,8 +44,9 @@ Foundation adds permissions for the other resources used by the admin portal.
 
 ## Customer portal
 
-The customer portal uses the role stored on each `Member` record. The same user
-can have a different role in each organization.
+The customer portal uses the `role` field stored on each `Member` record. A
+membership connects one user to one organization, so the same user can be an
+owner in one organization, an admin in another, and a member in another.
 
 ### Roles
 

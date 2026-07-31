@@ -1,0 +1,75 @@
+---
+title: "Coding agents"
+description: "Use the repository's agent instructions and skills to build consistently with SaaS Foundation."
+---
+
+SaaS Foundation includes instructions for coding agents. These files give a
+compatible agent the context it needs to understand the project structure,
+follow the existing patterns, and become productive without rediscovering every
+decision from scratch.
+
+## Agent instructions
+
+The root `AGENTS.md` explains the application architecture and its main coding
+conventions. It covers topics such as:
+
+- Admin and customer portal boundaries
+- Typed frontend API services and route handlers
+- Repository-based Prisma access
+- Zod validation and pre-checks
+- Serializer and public response types
+- Better Auth server API conventions
+- React Hook Form and shared UI patterns
+
+More specific `AGENTS.md` files live inside `src/app/` and `prisma/`. These add
+context for application routes and database work. When an agent works in one of
+those directories, it should follow both the root instructions and the nearest
+more-specific instructions.
+
+```text
+AGENTS.md
+├── src/app/AGENTS.md
+└── prisma/AGENTS.md
+```
+
+## Authentication skills
+
+The repository also includes focused agent skills under `.agents/skills/` for
+authentication and security work.
+
+```text
+.agents/skills/
+├── better-auth-best-practices/
+├── better-auth-security-best-practices/
+├── email-and-password-best-practices/
+├── organization-best-practices/
+└── two-factor-authentication-best-practices/
+```
+
+These skills give an agent additional Better Auth guidance when a task involves
+sessions, organizations, passwords, permissions, or authentication security.
+The application's own architecture and `AGENTS.md` conventions still take
+precedence when a general example uses a different pattern.
+
+## Working with a coding agent
+
+Open the repository in a coding-agent environment that supports `AGENTS.md`,
+then describe the feature or change you want. The existing instructions help the
+agent place code in the expected layer and preserve the application's trust
+boundaries.
+
+If your tool does not discover `AGENTS.md` automatically, ask it to read the root
+file and any scoped file that applies before making changes.
+
+<Info>
+  Agent instructions improve consistency, but they do not replace review. Check
+  the generated changes and run the relevant lint, type, and test commands
+  before merging them.
+</Info>
+
+## Keep instructions current
+
+Treat agent instructions like application documentation. When you introduce a
+new architectural pattern or replace an existing convention, update the
+relevant `AGENTS.md` file at the same time. This keeps future agent work aligned
+with the codebase as it evolves.

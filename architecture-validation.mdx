@@ -1,0 +1,55 @@
+---
+title: "Validation"
+description: "Learn how SaaS Foundation validates requests and shares Zod schemas."
+---
+
+SaaS Foundation uses Zod to validate data as it enters the backend. Request
+bodies and query parameters are parsed before repositories or authentication
+APIs receive their values.
+
+## Keep schemas next to routes
+
+Zod schemas live alongside their API route handlers. This keeps the accepted
+input close to the endpoint that enforces it.
+
+```text
+src/app/api/admin/organizations/
+├── route.ts
+└── schema.ts
+```
+
+Types such as `CreateOrganizationBody` and `UpdateOrganizationBody` are inferred
+from these schemas. Typed frontend API services can use the same input types
+without defining a second contract.
+
+## Share validation with forms
+
+When the same rules apply to a frontend form, the form can use the route's Zod
+schema as well. This keeps client feedback and backend enforcement aligned
+without making the frontend the source of truth.
+
+The backend always parses the request again. Client-side validation improves the
+experience, but it does not replace validation at the API boundary.
+
+## Validate before other operations
+
+A typical route parses the request before calling its repository:
+
+```ts
+export const POST = withAdmin(
+  async (request) => {
+    const validated = createOrganizationSchema.parse(await request.json());
+    const organization = await createOrganization(validated);
+
+    return createdResponse(serializeOrganization(organization));
+  },
+  { organization: ["create"] },
+);
+```
+
+Query parameters use the same pattern through `validateQuery`. When Zod throws a
+validation error, `withErrorHandler` converts it into the standard API
+validation response.
+
+See [Request handling](/api-request-handling) and [API format](/api-format) for
+the error-handling and response details.

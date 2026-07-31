@@ -1,0 +1,67 @@
+---
+title: "Serialization"
+description: "Learn how serializers and public types define frontend data shapes."
+---
+
+SaaS Foundation serializes data whenever it crosses from the backend to the
+frontend. A serializer turns a Prisma result into the public shape used by the
+presentation layer.
+
+## Serialize every response
+
+API routes do not return raw Prisma models. Each result passes through a
+serializer before it is added to a standard API response.
+
+```ts
+export function serializeOrganization(organization) {
+  return {
+    id: organization.id,
+    name: organization.name,
+    slug: organization.slug,
+    createdAt: organization.createdAt.toISOString(),
+  };
+}
+```
+
+This gives you one place to see exactly what the frontend receives. It also
+makes it easy to omit private fields, rename fields, convert dates, include
+computed values, or reshape related records.
+
+## Use public types
+
+The final serialized shapes live in `src/types/`. Serializers declare those
+types as their output, and API services and frontend components consume the same
+types.
+
+```text
+src/serializers/organizationSerializer.ts
+src/types/organization.ts
+```
+
+Keeping Prisma models behind this boundary prevents database implementation
+details from becoming accidental frontend contracts.
+
+## Use the same boundary for Server Components
+
+Serializers are not limited to API responses. When a Server Component loads
+data and passes it to a Client Component, the data crosses a backend-to-frontend
+boundary as well.
+
+SaaS Foundation uses the same serializers for that boundary. API responses and
+serialized Server Component props therefore share predictable frontend types.
+
+## Serialize lists and details
+
+Detail routes serialize one record. List routes serialize every result before
+adding pagination metadata.
+
+```ts
+return paginatedResponse(data.map(serializeOrganization), {
+  page,
+  perPage,
+  total,
+});
+```
+
+See [API format](/api-format) for the response envelopes that contain these
+serialized values.

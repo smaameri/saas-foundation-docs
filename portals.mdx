@@ -34,6 +34,31 @@ Each of these portals have their own roles and permissions scopes.
   </Card>
 </CardGroup>
 
+## Portal context
+
+### Admin portal context
+
+Every admin portal request runs as an authenticated user with a platform role.
+That role is stored in `User.role` and determines which admin operations the
+user can perform. Admin requests are platform-scoped rather than tied to one
+organization.
+
+### Customer portal context
+
+The customer portal always runs in the context of one active organization. All
+organization-owned pages, queries, and mutations use that organization as their
+tenant boundary.
+
+A user can belong to multiple organizations and can have a different membership
+role in each one. The organization switcher lets the user choose which
+organization they are currently working in. Choosing another organization
+updates `activeOrganizationId` on the Better Auth session.
+
+Every customer request reads that active organization ID, verifies that the
+user has a membership for it, and uses the matching membership role for
+permission checks. Switching organizations therefore changes both the data in
+scope and the role applied to the request.
+
 ## Why the portals are separate
 
 The portals represent different trust boundaries and access levels. Admin operations may work
