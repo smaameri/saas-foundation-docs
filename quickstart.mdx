@@ -1,47 +1,86 @@
 ---
 title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+description: "Install SaaS Foundation and start the application locally."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
+import { CustomTip } from "./components/copy-password.jsx";
 
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
+Follow these steps to configure and launch the SaaS Foundation starter template s on your
+local machine.
 
 ## Prerequisites
 
-Before you begin, you must have:
+Install the following tools before you begin:
 
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
+<CardGroup cols={3}>
+  <Card title="Node.js" icon="node-js" iconType="brands" href="https://nodejs.org/">
+    Run the application and its development tooling.
+  </Card>
+  <Card title="pnpm" icon="box" href="https://pnpm.io/installation">
+    Install dependencies and run project scripts.
+  </Card>
+  <Card title="Docker" icon="docker" iconType="brands" href="https://docs.docker.com/get-docker/">
+    Run the local PostgreSQL database.
+  </Card>
+</CardGroup>
 
 ## Get started
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
+  <Step title="Clone the repository">
+    Clone SaaS Foundation and enter the project directory.
 
     ```bash
-    npm install your-package
+    git clone git@github.com:smaameri/saas-foundation.git
+    cd saas-foundation
     ```
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
+
+  <Step title="Install dependencies">
+    Install the project packages with pnpm.
 
     ```bash
-    your-cli init
+    pnpm install
     ```
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
+
+  <Step title="Set up the application">
+    Run the interactive setup command to
+    - launch the docker container with the postgres database inside it
+    - create the admin user you will use to login to the application
+    - create an initial organization you are a member of
+    - seed the database with some initial data
 
     ```bash
-    your-cli start
+    pnpm app:setup
+    ```
+  </Step>
+
+  <Step title="Start the development server">
+    Launch SaaS Foundation platform development server.
+
+    ```bash
+    pnpm dev
     ```
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+## Configure email
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+To send invitations and account emails, create an account with
+[Resend](https://resend.com), generate an API key, and add it to `.env`.
+
+```dotenv
+RESEND_API_KEY=re_...
+```
+
+Verify your sending domain in Resend, then configure the sender address.
+
+```dotenv
+EMAIL_FROM="notifications@your-domain.com"
+```
+
+<CustomTip>
+  You can skip the email configuration while evaluating the application
+  locally. Add it before testing invitation and account email flows.
+</CustomTip>
