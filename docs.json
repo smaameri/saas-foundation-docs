@@ -41,6 +41,12 @@
         "pages": [
           "authentication"
         ]
+      },
+      {
+        "group": "Configuration",
+        "pages": [
+          "email"
+        ]
       }
     ]
   },
