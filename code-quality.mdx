@@ -1,0 +1,70 @@
+---
+title: "Code quality"
+description: "Automated pre-commit checks to keep the codebase consistent."
+---
+
+SaaS Foundation uses Husky to check code quality and auto-format code before each commit. This means the code base
+formatting always stays consistent between you are your team.
+
+## Tools
+
+- **Husky** connects the workflow to Git's pre-commit hook
+- **ESLint** identifies code-quality problems and potential bugs.
+- **Prettier** applies consistent formatting and import ordering.
+
+## Pre-commit workflow
+
+Installing the project dependencies runs the `prepare` script, which configures
+Husky. When you commit a change, the pre-commit hook runs:
+
+```bash
+pnpm lint-staged
+```
+
+`lint-staged` selects commands based on each staged file's extension.
+
+| Staged files | Commands |
+| --- | --- |
+| `*.ts`, `*.tsx` | `eslint --fix`, then `prettier --write` |
+| `*.json`, `*.css`, `*.md` | `prettier --write` |
+
+ESLint and Prettier update the staged files when they can fix an issue
+automatically. `lint-staged` includes those updates in the commit. If a command
+fails, Git stops the commit so you can correct the remaining problem.
+
+<Note>
+  The pre-commit workflow checks staged files only. It does not run the
+  TypeScript compiler, tests, or a complete repository lint.
+</Note>
+
+## Run checks manually
+
+Lint the complete codebase:
+
+```bash
+pnpm lint
+```
+
+Check TypeScript types:
+
+```bash
+pnpm typecheck
+```
+
+Format a file manually:
+
+```bash
+pnpm exec prettier --write path/to/file
+```
+
+## Configuration files
+
+- `.husky/pre-commit` starts the pre-commit workflow.
+- `package.json` maps staged file types to linting and formatting commands.
+- `eslint.config.mjs` configures ESLint, TypeScript, and Next.js rules.
+- `.prettierrc` configures formatting and import ordering.
+
+<Info>
+  Pre-commit checks provide fast local feedback. Run the complete lint,
+  type-check, test, and build checks in CI before merging a change.
+</Info>

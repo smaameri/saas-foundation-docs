@@ -23,6 +23,7 @@
         "pages": [
           "portals",
           "roles-and-permissions",
+          "authentication",
           "schema"
         ]
       },
@@ -33,7 +34,8 @@
           "architecture-repositories",
           "architecture-validation",
           "architecture-serialization",
-          "ai-assistance"
+          "ai-assistance",
+          "code-quality"
         ]
       },
       {
@@ -42,12 +44,6 @@
           "architecture-api",
           "api-request-handling",
           "api-format"
-        ]
-      },
-      {
-        "group": "Authentication",
-        "pages": [
-          "authentication"
         ]
       },
       {
