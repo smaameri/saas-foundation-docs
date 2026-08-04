@@ -3,64 +3,41 @@ title: "Portals"
 description: "The Admin and Customer portals"
 ---
 
-A typical multi-tenant B2B SaaS application has two main types of users or access. The Admin users are the owners of the platform
-and have cross-organization access. A customer user is a member of an organization and has access to the resources of
-that organization only.
+A typical multi-tenant B2B SaaS application has two main types of users or access levels. The Admin users are the owners of the platform,
+and have cross-organization access. A customer user is a
+member of an organization and has access to the resources of that organization only.
 
-As such, each of these user types has their own portals, since their needs and requirements will be different.
+These user types have fundamentally different permissions levels, and their needs and requirements are different.
+
+Creating separate portals or interfacess for each of these user types is helpful. Each portal can be designed to support
+the needs of that specific user type.
 
 These are provided for in the SaaS Foundation template as the Admin and Customer portals.
 
 The application is setup in such a way that an Admin Portal user can also be a member of one or many organizations. As
-such they are also able to access the Customer Portals as part of their organization.
+such they are also able to access the Customer Portals as part of their organization(s). That means you can "use
+your own app", also knows a dogfooding in the software world.
 
-Each of these portals have their own roles and permissions scopes.
+# Features
 
-<CardGroup cols={2}>
-  <Card title="Admin portal" icon="shield-halved">
-    The admin portal is for your platform administrators. It provides
-    cross-organization access for operating the SaaS application as a whole.
+## Admin Portal
+Most of the features provided for in the SaaS Foundation template are found in the Admin Portal. That is becauase these
+are the generic features that are required for most applications. Things like
+- inviting users to the platform
+- creating organizations
+- managing organization members and inviting them to the platform
+- managing user roles within the platform
+- impersonating users, so you can see what a user would see
+- banning users
 
-    Use it to manage platform users, organizations, team members, and other
-    system-wide resources.
-  </Card>
+These are a massively useful set of features that take time to implement well, and will help streamline management of
+the platform as it grows.
 
-  <Card title="Customer portal" icon="building-user">
-    The customer portal is for the people inside an organization, including its
-    owners, administrators, and members.
+## Customer Portal
 
-    Access is scoped to the active organization. Customers use this portal to
-    manage their workspace, members, invitations, and organization-owned data.
-  </Card>
-</CardGroup>
+The Customer Portal comes with a smaller, but still useful set of features, based around managing organization members, such as
+- inviting and removing users to the organization
+- managing user roles within the organization
 
-## Portal context
-
-### Admin portal context
-
-Every admin portal request runs as an authenticated user with a platform role.
-That role is stored in `User.role` and determines which admin operations the
-user can perform. Admin requests are platform-scoped rather than tied to one
-organization.
-
-### Customer portal context
-
-The customer portal always runs in the context of one active organization. All
-organization-owned pages, queries, and mutations use that organization as their
-tenant boundary.
-
-A user can belong to multiple organizations and can have a different membership
-role in each one. The organization switcher lets the user choose which
-organization they are currently working in. Choosing another organization
-updates `activeOrganizationId` on the Better Auth session.
-
-Every customer request reads that active organization ID, verifies that the
-user has a membership for it, and uses the matching membership role for
-permission checks. Switching organizations therefore changes both the data in
-scope and the role applied to the request.
-
-## Why the portals are separate
-
-The portals represent different trust boundaries and access levels. Admin operations may work
-across the entire platform, while customer operations must remain scoped to the
-current organization.
+The Customer Portal however is where most of the development work happens. After app, we are building an application for
+our customers, and these will belong it what we are here calling the Customer Portal.
