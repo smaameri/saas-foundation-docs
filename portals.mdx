@@ -42,6 +42,25 @@ The Customer Portal comes with a smaller, but still useful set of features, base
 The Customer Portal however is where most of the development work happens. After app, we are building an application for
 our customers, and these will belong it what we are here calling the Customer Portal.
 
+# Roles
+
+Portal access is determined by roles the users have assigned to them.
+
+**Admin Portal Access**
+
+This is defined by the `user.role` field. If this user is set null, the user has no access to the Admin Portal.
+The valid for this field are `admin` and `user`. If it is set to any one of these, the user will have access to the
+Admin Portal. The value determines their level of access within the Admin Portal.
+
+**Customer Portal Access**
+
+This is defined by the `member.role` field. Each member record is associated with a single organization, and the role
+value on that record determines their level of access within that Organization within the customer portal. This means
+a user can have different roles within different organizations. Valid values for this field
+are `owner`, `admin`, and `user`.
+
+
+
 # Navigation
 
 Use the user navigation menu in the lower-left corner to move between portals.
